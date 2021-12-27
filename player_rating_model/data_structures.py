@@ -1,11 +1,22 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List, Tuple
+from typing import Dict, List, Literal
+
+DIFFERENCE = "difference"
+
+
+@dataclass
+class RatingMetric:
+    name: str
+    against: str = None
+    prediction: Literal["difference", "sum"] = "difference"
 
 
 @dataclass
 class Rating:
-    metric_name: str
+    entity_id: int
+    team_id: int
+    rating_metric: RatingMetric
     value: float
     rating_context: Dict[str, float] = None
 
@@ -23,17 +34,23 @@ class RatingTeam:
 
 
 @dataclass
-class Performance:
+class PerformancePredict:
+    pre_match_ratings: Dict[str, Rating]
+    pre_match_average_opponent_ratings: Dict[str, Rating]
     predicted_performance: float
     performance: float
+
+
+@dataclass
+class RatingUpdate:
+    performance: PerformancePredict
 
 
 @dataclass
 class MatchRating:
     entity_id: int
     opponent_team_id: int
-    pre_match_ratings: Dict[str, Rating]
-    pre_match_average_opponent_ratings: Dict[str, Rating]
+
     opponent_player_ids: List[int] = None
     pre_match_team_ratings: List[Dict[str, Rating]] = None
     pre_match_opponent_ratings: List[Dict[str, Rating]] = None
